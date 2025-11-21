@@ -101,9 +101,12 @@ namespace TemplateProcessor
             {
                 HelpFunc.LogMessage("=== Starting Excel file reload ===");
                 
-                string workDirectory = Path.Combine(_config.CommonData.SharedFolderPath, _config.CommonData.ProjectFolderName);
+                // Excel source is directly on T: drive (no subfolder)
                 string excelFileName = _config.CommonData.ExcelDataFileName;
-                string excelSourcePath = Path.Combine(workDirectory, excelFileName);
+                string excelSourcePath = Path.Combine(_config.CommonData.SharedInputDrive + "\\", excelFileName);
+                
+                // Destination Tmp_ file goes to Z:\Senja_GenData\
+                string workDirectory = Path.Combine(_config.CommonData.SharedFolderPath, _config.CommonData.ProjectFolderName);
                 string excelDestinationPath = Path.Combine(workDirectory, "Tmp_" + excelFileName);
 
                 // Check if source file exists
@@ -130,12 +133,14 @@ namespace TemplateProcessor
                     }
                 }
 
-                // Copy fresh Excel file
+                // Copy fresh Excel file from T: to Z:\Senja_GenData\
                 HelpFunc.CopyExcelFile(excelSourcePath, excelDestinationPath);
-                HelpFunc.LogMessage($"Excel file reloaded successfully: {excelFileName} -> Tmp_{excelFileName}");
+                HelpFunc.LogMessage($"Excel file reloaded successfully:");
+                HelpFunc.LogMessage($"  Source: {excelSourcePath}");
+                HelpFunc.LogMessage($"  Destination: {excelDestinationPath}");
                 HelpFunc.LogMessage("=== Excel reload completed ===");
                 
-                MessageBox.Show($"Excel file reloaded successfully!\n\nSource: {excelFileName}\nDestination: Tmp_{excelFileName}", 
+                MessageBox.Show($"Excel file reloaded successfully!\n\nSource: {excelSourcePath}\nDestination: {excelDestinationPath}", 
                     "Data Reloaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)

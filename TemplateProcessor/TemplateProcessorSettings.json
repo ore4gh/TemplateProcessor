@@ -6,16 +6,16 @@
     "ExcelDataFileName": "Components_Senja_WinCCv8_v05_2025_20250801.xlsm"
   },
     "SqlCommonData": {
-      "Server": "WinCCCli01\\WINCC",
-      "Database": "Senja_Production",
+      "Server": "ServerName\\WINCC",
+      "Database": "ProjectName_Production",
       "Username": "sa",
-      "Password": "Ves#1416&"
+      "Password": "passwordhere"
     },
     "SqlServerVerdo": {
-      "Server": "DESKTOP-383PJ4M\\SQLEXPRESS",
-      "Database": "Verdo_Production",
+      "Server": "D383PJ4M\\SQLEXPRESS",
+      "Database": "LocalDBName_Production",
       "Username": "sa",
-      "Password": "Verdo1234#"
+      "Password": "passwordhere"
     }
   }
   

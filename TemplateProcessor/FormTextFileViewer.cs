@@ -11,34 +11,34 @@ namespace TemplateProcessor
         private CommonConfig _config;
         private TextBox txtLog;
         private Panel panelTextDisplay;
-        private TextBox txtFileContent;
-        private Label lblFileName;
+        private TabControl tabControl;
+        private Label lblFileInfo;
 
         public FormTextFileViewer(TextBox log, CommonConfig config)
         {
             _config = config;
             txtLog = log;
             InitializeComponent();
-            LoadFirstTextFile();
+            LoadAllTextFiles();
         }
 
         private void InitializeComponent()
         {
             this.panelTextDisplay = new Panel();
-            this.lblFileName = new Label();
-            this.txtFileContent = new TextBox();
+            this.lblFileInfo = new Label();
+            this.tabControl = new TabControl();
             this.SuspendLayout();
 
             // 
-            // lblFileName
+            // lblFileInfo
             // 
-            this.lblFileName.AutoSize = true;
-            this.lblFileName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblFileName.Location = new System.Drawing.Point(10, 10);
-            this.lblFileName.Name = "lblFileName";
-            this.lblFileName.Size = new System.Drawing.Size(200, 23);
-            this.lblFileName.TabIndex = 0;
-            this.lblFileName.Text = "No file loaded";
+            this.lblFileInfo.AutoSize = true;
+            this.lblFileInfo.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblFileInfo.Location = new System.Drawing.Point(10, 10);
+            this.lblFileInfo.Name = "lblFileInfo";
+            this.lblFileInfo.Size = new System.Drawing.Size(200, 23);
+            this.lblFileInfo.TabIndex = 0;
+            this.lblFileInfo.Text = "Loading files...";
 
             // 
             // panelTextDisplay
@@ -53,35 +53,30 @@ namespace TemplateProcessor
             this.panelTextDisplay.TabIndex = 1;
 
             // 
-            // txtFileContent
+            // tabControl
             // 
-            this.txtFileContent.Dock = DockStyle.Fill;
-            this.txtFileContent.Font = new System.Drawing.Font("Consolas", 9F);
-            this.txtFileContent.Location = new System.Drawing.Point(0, 0);
-            this.txtFileContent.Multiline = true;
-            this.txtFileContent.Name = "txtFileContent";
-            this.txtFileContent.ScrollBars = ScrollBars.Both;
-            this.txtFileContent.Size = new System.Drawing.Size(778, 543);
-            this.txtFileContent.TabIndex = 0;
-            this.txtFileContent.WordWrap = false;
-            this.txtFileContent.ReadOnly = true;
+            this.tabControl.Dock = DockStyle.Fill;
+            this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.Size = new System.Drawing.Size(778, 543);
+            this.tabControl.TabIndex = 0;
 
-            // Add TextBox to Panel
-            this.panelTextDisplay.Controls.Add(this.txtFileContent);
+            // Add TabControl to Panel
+            this.panelTextDisplay.Controls.Add(this.tabControl);
 
             // 
             // FormTextFileViewer
             // 
             this.ClientSize = new System.Drawing.Size(800, 600);
             this.Controls.Add(this.panelTextDisplay);
-            this.Controls.Add(this.lblFileName);
+            this.Controls.Add(this.lblFileInfo);
             this.Name = "FormTextFileViewer";
             this.Text = "Text File Viewer";
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
-        private void LoadFirstTextFile()
+        private void LoadAllTextFiles()
         {
             try
             {
@@ -95,6 +90,7 @@ namespace TemplateProcessor
                 if (!Directory.Exists(projectFolder))
                 {
                     HelpFunc.LogMessage($"ERROR: Project folder not found: {projectFolder}");
+                    lblFileInfo.Text = "ERROR: Project folder not found";
                     MessageBox.Show($"Project folder not found:\n{projectFolder}", 
                         "Folder Not Found", 
                         MessageBoxButtons.OK, 
@@ -107,8 +103,8 @@ namespace TemplateProcessor
                 
                 if (!File.Exists(configFilePath))
                 {
-                    lblFileName.Text = "GenDataConfig.json not found";
-                    txtFileContent.Text = "ERROR: GenDataConfig.json not found in project folder.\n\nPlease ensure the configuration file exists.";
+                    lblFileInfo.Text = "GenDataConfig.json not found";
+                    AddErrorTab("ERROR: GenDataConfig.json not found in project folder.\n\nPlease ensure the configuration file exists.");
                     HelpFunc.LogMessage($"ERROR: Config file not found: {configFilePath}");
                     return;
                 }
@@ -120,8 +116,8 @@ namespace TemplateProcessor
 
                 if (string.IsNullOrEmpty(activeObjType))
                 {
-                    lblFileName.Text = "ActiveObjType not found in config";
-                    txtFileContent.Text = "ERROR: ActiveObjType not specified in GenDataConfig.json";
+                    lblFileInfo.Text = "ActiveObjType not found in config";
+                    AddErrorTab("ERROR: ActiveObjType not specified in GenDataConfig.json");
                     HelpFunc.LogMessage($"ERROR: ActiveObjType not found in config");
                     return;
                 }
@@ -133,8 +129,8 @@ namespace TemplateProcessor
 
                 if (!Directory.Exists(objectOutputFolder))
                 {
-                    lblFileName.Text = $"No Output folder for {activeObjType}";
-                    txtFileContent.Text = $"Output folder not found:\n{objectOutputFolder}\n\nPlease generate output files for {activeObjType} first.";
+                    lblFileInfo.Text = $"No Output folder for {activeObjType}";
+                    AddErrorTab($"Output folder not found:\n{objectOutputFolder}\n\nPlease generate output files for {activeObjType} first.");
                     HelpFunc.LogMessage($"ERROR: Output folder not found: {objectOutputFolder}");
                     return;
                 }
@@ -158,40 +154,82 @@ namespace TemplateProcessor
 
                 if (txtFiles.Length == 0)
                 {
-                    lblFileName.Text = $"No output files for {activeObjType}";
-                    txtFileContent.Text = $"No .txt output files found in:\n{searchFolder}\n\nPlease run the Generator to create output files.";
+                    lblFileInfo.Text = $"No output files for {activeObjType}";
+                    AddErrorTab($"No .txt output files found in:\n{searchFolder}\n\nPlease run the Generator to create output files.");
                     HelpFunc.LogMessage($"No .txt files found in: {searchFolder}");
                     return;
                 }
 
-                // Get the first .txt file (alphabetically)
-                string firstTxtFile = txtFiles[0];
-                
-                // Read the file content
-                string content = File.ReadAllText(firstTxtFile);
+                // Clear existing tabs
+                tabControl.TabPages.Clear();
 
-                // Display file name with folder info
-                string relativePath = Path.GetRelativePath(projectFolder, firstTxtFile);
-                lblFileName.Text = $"Object: {activeObjType} | File: {Path.GetFileName(firstTxtFile)} (1 of {txtFiles.Length})";
+                // Create a tab for each file
+                foreach (string filePath in txtFiles)
+                {
+                    string fileName = Path.GetFileName(filePath);
+                    
+                    // Read the file content
+                    string content = File.ReadAllText(filePath);
 
-                // Display file content
-                txtFileContent.Text = content;
+                    // Create a new tab page
+                    TabPage tabPage = new TabPage(fileName);
 
-                HelpFunc.LogMessage($"Loaded generated output file: {Path.GetFileName(firstTxtFile)}");
-                HelpFunc.LogMessage($"Full path: {relativePath}");
-                HelpFunc.LogMessage($"File size: {new FileInfo(firstTxtFile).Length} bytes");
-                HelpFunc.LogMessage($"Total output files in folder: {txtFiles.Length}");
+                    // Create a TextBox for this file
+                    TextBox txtContent = new TextBox
+                    {
+                        Dock = DockStyle.Fill,
+                        Font = new System.Drawing.Font("Consolas", 9F),
+                        Multiline = true,
+                        ScrollBars = ScrollBars.Both,
+                        WordWrap = false,
+                        ReadOnly = true,
+                        Text = content
+                    };
+
+                    // Add TextBox to TabPage
+                    tabPage.Controls.Add(txtContent);
+
+                    // Add TabPage to TabControl
+                    tabControl.TabPages.Add(tabPage);
+
+                    HelpFunc.LogMessage($"Loaded file into tab: {fileName} ({new FileInfo(filePath).Length} bytes)");
+                }
+
+                // Update label with info
+                string relativePath = Path.GetRelativePath(projectFolder, searchFolder);
+                lblFileInfo.Text = $"Object: {activeObjType} | Folder: {relativePath} | Files: {txtFiles.Length}";
+
+                HelpFunc.LogMessage($"Successfully loaded {txtFiles.Length} output files into tabs");
             }
             catch (Exception ex)
             {
-                HelpFunc.LogMessage($"ERROR loading text file: {ex.Message}");
-                lblFileName.Text = "Error loading file";
-                txtFileContent.Text = $"Error loading text file:\n{ex.Message}\n\nStack trace:\n{ex.StackTrace}";
-                MessageBox.Show($"Error loading text file:\n{ex.Message}", 
+                HelpFunc.LogMessage($"ERROR loading text files: {ex.Message}");
+                lblFileInfo.Text = "Error loading files";
+                AddErrorTab($"Error loading text files:\n{ex.Message}\n\nStack trace:\n{ex.StackTrace}");
+                MessageBox.Show($"Error loading text files:\n{ex.Message}", 
                     "Load Error", 
                     MessageBoxButtons.OK, 
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void AddErrorTab(string errorMessage)
+        {
+            tabControl.TabPages.Clear();
+            TabPage errorTab = new TabPage("Error");
+            TextBox txtError = new TextBox
+            {
+                Dock = DockStyle.Fill,
+                Font = new System.Drawing.Font("Consolas", 9F),
+                Multiline = true,
+                ScrollBars = ScrollBars.Both,
+                WordWrap = true,
+                ReadOnly = true,
+                Text = errorMessage,
+                ForeColor = System.Drawing.Color.Red
+            };
+            errorTab.Controls.Add(txtError);
+            tabControl.TabPages.Add(errorTab);
         }
     }
 }
