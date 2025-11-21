@@ -1,0 +1,21 @@
+{
+  "CommonData": {
+	"SharedInputDrive": "T:",
+    "SharedFolderPath": "Z:",
+    "ProjectFolderName": "Senja_GenData",
+    "ExcelDataFileName": "Components_Senja_WinCCv8_v05_2025_20250801.xlsm"
+  },
+    "SqlCommonData": {
+      "Server": "WinCCCli01\\WINCC",
+      "Database": "Senja_Production",
+      "Username": "sa",
+      "Password": "Ves#1416&"
+    },
+    "SqlServerVerdo": {
+      "Server": "DESKTOP-383PJ4M\\SQLEXPRESS",
+      "Database": "Verdo_Production",
+      "Username": "sa",
+      "Password": "Verdo1234#"
+    }
+  }
+  
