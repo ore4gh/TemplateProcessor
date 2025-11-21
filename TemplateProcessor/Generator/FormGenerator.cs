@@ -1,4 +1,4 @@
-﻿
+
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.Identity.Client;
 using System;
@@ -196,6 +196,15 @@ namespace TemplateProcessor.Generator
             if (cbxActiveObjectType.SelectedItem is string selectedObjType)
             {
                 UpdateStartEndRows(selectedObjType);
+                
+                // Update and save ActiveObjType to JSON config immediately
+                var generatorData = _generatorEngine.GetGeneratorData();
+                if (generatorData != null)
+                {
+                    generatorData.ActiveObjType = selectedObjType;
+                    _generatorEngine.SaveGenDataConfig();
+                    HelpFunc.LogMessage($"ActiveObjType updated and saved to config: {selectedObjType}");
+                }
             }
         }
 

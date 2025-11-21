@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -159,6 +159,11 @@ namespace TemplateProcessor
             ShowFormInPanel(new Sequence.FormTextListGenerator(txtLog, _config));
         }
 
+        private void MenuItemTextViewer_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new FormTextFileViewer(txtLog, _config));
+        }
+
         private void MenuItemReloadExcel_Click(object sender, EventArgs e)
         {
             // Step 1: Reload config file FIRST
@@ -269,6 +274,7 @@ namespace TemplateProcessor
             txtLog = new TextBox();
             panelPlaceholder = new Panel();
             toolStripMenuItem20 = new ToolStripMenuItem();
+            toolStripMenuItemTextViewer = new ToolStripMenuItem();
             toolStripMenuItemReloadExcel = new ToolStripMenuItem();
             toolStripMenuItemReload = new ToolStripMenuItem();
             toolStripMenuItemSaveConfig = new ToolStripMenuItem();
@@ -278,7 +284,7 @@ namespace TemplateProcessor
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem20, toolStripMenuItem2, toolStripMenuItemReloadExcel, toolStripMenuItemReload, toolStripMenuItemSaveConfig });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem20, toolStripMenuItem2, toolStripMenuItemTextViewer, toolStripMenuItemReloadExcel, toolStripMenuItemReload, toolStripMenuItemSaveConfig });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1813, 24);
@@ -332,6 +338,13 @@ namespace TemplateProcessor
             toolStripMenuItem20.Text = "Templates";
             toolStripMenuItem20.Click += toolStripMenuItem20_Click;
             // 
+            // toolStripMenuItemTextViewer
+            // 
+            toolStripMenuItemTextViewer.Name = "toolStripMenuItemTextViewer";
+            toolStripMenuItemTextViewer.Size = new Size(79, 20);
+            toolStripMenuItemTextViewer.Text = "Text Viewer";
+            toolStripMenuItemTextViewer.Click += MenuItemTextViewer_Click;
+            // 
             // toolStripMenuItemReloadExcel
             // 
             toolStripMenuItemReloadExcel.Name = "toolStripMenuItemReloadExcel";
@@ -378,6 +391,7 @@ namespace TemplateProcessor
         private TextBox txtLog;
         private ToolStripMenuItem toolStripMenuItem20;
         private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem toolStripMenuItemTextViewer;
         private ToolStripMenuItem toolStripMenuItemReloadExcel;
         private ToolStripMenuItem toolStripMenuItemReload;
         private ToolStripMenuItem toolStripMenuItemSaveConfig;
