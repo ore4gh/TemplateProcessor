@@ -12,10 +12,10 @@
       "Password": "passwordhere"
     },
     "SqlServerVerdo": {
-      "Server": "D383PJ4M\\SQLEXPRESS",
+      "Server": "LocalPCName\\SQLEXPRESS",
       "Database": "LocalDBName_Production",
       "Username": "sa",
-      "Password": "passwordhere"
+      "Password": "passwordere"
     }
   }
   
